@@ -1,3 +1,3 @@
-import { Hello } from "bun-template";
+import { Accumulator } from "list-accumulator";
 
-export { Hello };
+export { Accumulator };

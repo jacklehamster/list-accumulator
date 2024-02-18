@@ -1,8 +1,8 @@
 {
-  "name": "bun-template",
+  "name": "list-accumulator",
   "module": "src/index.ts",
-  "description": "Bun template for creating projects using bunjs",
-  "version": "1.0.46",
+  "description": "Component that accumulates lists that notify updates, turning itself into a list. This sounds pointless, but this is very useful for the Dok game engine.",
+  "version": "1.0.0",
   "keywords": [
     "bun",
     "bunjs",
@@ -15,9 +15,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:jacklehamster/bun-template.git"
+    "url": "https://github.com/jacklehamster/list-accumulator.git"
   },
-  "homepage": "https://jacklehamster.github.io/bun-template/",
+  "homepage": "<fill in homepage>",
   "author": {
     "name": "Jack Le Hamster",
     "email": "jacklehamster@gmail.com"
@@ -65,5 +65,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "abstract-list": "^1.0.8",
+    "bun-pool": "^1.0.7",
+    "dok-types": "^1.0.7"
   }
 }
