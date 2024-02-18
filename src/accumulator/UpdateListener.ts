@@ -1,5 +1,6 @@
 import { IdType, UpdateType } from "dok-types";
-import { IUpdateListener, IUpdateNotifier } from "./IUpdateNotifier";
+import { IUpdateNotifier } from "./IUpdateNotifier";
+import { IUpdateListener } from "./IUpdateListener";
 import { List, forEach } from "abstract-list";
 import { EMPTY } from "./Accumulator";
 

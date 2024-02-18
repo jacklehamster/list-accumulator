@@ -1,8 +1,5 @@
 import { IdType, UpdateType } from "dok-types";
-
-export interface IUpdateListener {
-  onUpdate(id: IdType, type?: UpdateType): void;
-}
+import { IUpdateListener } from "./IUpdateListener";
 
 export interface IUpdateNotifier {
   informUpdate(id: IdType, type?: UpdateType): void;

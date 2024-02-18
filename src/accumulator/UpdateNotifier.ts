@@ -1,5 +1,6 @@
 import { IdType, UpdateType } from "dok-types";
-import { IUpdateListener, IUpdateNotifier } from "./IUpdateNotifier";
+import { IUpdateNotifier } from "./IUpdateNotifier";
+import { IUpdateListener } from "./IUpdateListener";
 
 export class UpdateNotifier implements IUpdateNotifier {
   listeners = new Set<IUpdateListener>();
