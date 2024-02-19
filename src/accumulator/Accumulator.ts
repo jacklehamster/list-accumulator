@@ -2,10 +2,11 @@ import { IdType } from "dok-types";
 import { ObjectPool } from "bun-pool";
 import { IUpdateNotifier } from "./IUpdateNotifier";
 import { UpdateNotifier } from "./UpdateNotifier";
-import { List } from "abstract-list";
+import { List, forEach } from "abstract-list";
 import { UpdateListenerPool } from "./UpdateListenerPool";
 import { UpdateListener } from "./UpdateListener";
 import { IUpdatableList } from "./IUpdatableList";
+import { SwissCheeseList } from "./SwissCheeseList";
 
 interface Slot<T> {
   elems: List<T>;
@@ -13,31 +14,30 @@ interface Slot<T> {
 }
 
 interface Props {
-  onChange?(value: number): void;
+  onChange(value: number): void;
 }
 
 export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> {
-  readonly #slots: (Slot<T> | undefined)[] = [];
-  readonly #pool = new SlotPool<T>();
-  readonly #freeIndices: number[] = [];
+  readonly #slots;
   readonly #updateListenerMap: Map<List<T>, UpdateListener<T>> = new Map();
+  readonly #slotPool = new SlotPool<T>();
   readonly #listenerPool = new UpdateListenerPool<T>({
     informUpdate: this.informUpdate.bind(this),
     addElem: this.#addElemToSlot.bind(this),
     removeElem: this.#removeElemFromSlot.bind(this),
   });
-  readonly length: List<T>["length"];
 
   constructor({ onChange }: Partial<Props> = {}) {
     super();
-    this.length = {
-      valueOf: () => this.#slots.length,
-      onChange: onChange ? (value) => onChange?.(value) : undefined,
-    };
+    this.#slots = new SwissCheeseList<Slot<T>>({ onChange });
+  }
+
+  get length(): List<T>["length"] {
+    return this.#slots.length;
   }
 
   at(id: IdType): T | undefined {
-    const slot = this.#slots[id];
+    const slot = this.#slots.at(id);
     return slot?.elems.at(slot.index);
   }
 
@@ -55,56 +55,33 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   }
 
   clear(): void {
-    this.#slots.forEach((slot, id) => {
+    forEach(this.#slots, (slot, id) => {
       this.informUpdate(id);
       if (slot) {
-        this.#pool.recycle(slot);
+        this.#slotPool.recycle(slot);
       }
     });
-    this.#freeIndices.length = 0;
-    this.#slots.length = 0;
-    this.#onSizeChange();
-  }
-
-  #onSizeChange() {
-    this.length.onChange?.(this.length.valueOf());
-  }
-
-  #provideIndex(): number {
-    let freeIndex = this.#freeIndices.pop();
-    if (freeIndex === undefined) {
-      freeIndex = this.#slots.length;
-      this.#slots.push(undefined);
-      this.#onSizeChange();
-    }
-    return freeIndex;
-  }
-
-  #recycleIndex(index: number): void {
-    this.#freeIndices.push(index);
+    this.#slots.clear();
   }
 
   #addElemToSlot(elems: List<T>, index: number): IdType {
-    const id = this.#provideIndex();
-    this.#slots[id] = this.#pool.create(elems, index, id);
+    const id = this.#slots.addElem(this.#slotPool.create(elems, index));
     this.informUpdate(id);
     return id;
   }
 
   #removeElemFromSlot(id: IdType): void {
-    const slot = this.#slots[id];
+    const slot = this.#slots.removeElem(id);
     if (slot) {
-      this.#pool.recycle(slot);
-      this.#slots[id] = undefined;
+      this.#slotPool.recycle(slot);
+      this.informUpdate(id);
     }
-    this.#recycleIndex(id);
-    this.informUpdate(id);
   }
 }
 
 export const EMPTY: List<any> = []
 
-class SlotPool<T> extends ObjectPool<Slot<T>, [List<T>, IdType, IdType]> {
+class SlotPool<T> extends ObjectPool<Slot<T>, [List<T>, IdType]> {
   constructor() {
     super((slot, elems, index) => {
       if (!slot) {

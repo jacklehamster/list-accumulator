@@ -1,4 +1,3 @@
-import { IUpdateNotifier } from "./IUpdateNotifier";
 import { UpdateNotifier } from "./UpdateNotifier";
 
 describe("UpdateNotifier", () => {
