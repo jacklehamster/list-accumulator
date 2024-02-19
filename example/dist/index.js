@@ -1,5 +1,5 @@
 // /Users/vincent/list-accumulator/example/node_modules/list-accumulator/dist/index.js
-class R {
+class V {
   i;
   f;
   warningLimit = 50000;
@@ -50,7 +50,7 @@ class X {
     this.listeners.delete(D);
   }
 }
-var V = function(D, J) {
+var R = function(D, J) {
   if (D) {
     const K = D.length.valueOf();
     for (let Q = 0;Q < K; Q++)
@@ -72,10 +72,10 @@ class Z {
     this.elems = D, this.initialize(D);
   }
   initialize(D) {
-    this.elems = D, this.elems.addUpdateListener?.(this), V(D, (J, K) => this.onUpdate(K));
+    this.elems = D, this.elems.addUpdateListener?.(this), R(D, (J, K) => this.onUpdate(K));
   }
   dispose() {
-    V(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = $;
+    R(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = B;
   }
   onUpdate(D, J) {
     const K = this.elems.at(D);
@@ -94,7 +94,7 @@ class Z {
   }
 }
 
-class _ extends R {
+class _ extends V {
   constructor({ informUpdate: D, addElem: J, removeElem: K }) {
     super((Q, W) => {
       if (Q)
@@ -106,62 +106,86 @@ class _ extends R {
   }
 }
 
-class w extends X {
+class $ {
   #D = [];
-  #J = new B;
-  #K = [];
-  #Q = new Map;
-  #R = new _({ informUpdate: this.informUpdate.bind(this), addElem: this.#Z.bind(this), removeElem: this.#_.bind(this) });
+  #J = [];
   length;
   constructor({ onChange: D } = {}) {
-    super();
     this.length = { valueOf: () => this.#D.length, onChange: D ? (J) => D?.(J) : undefined };
   }
   at(D) {
-    const J = this.#D[D];
+    return this.#D.at(D);
+  }
+  addElem(D) {
+    const J = this.#K();
+    return this.#D[J] = D, J;
+  }
+  removeElem(D) {
+    const J = this.#D.at(D);
+    if (J !== undefined)
+      this.#D[D] = undefined, this.#J.push(D);
+    return J;
+  }
+  clear() {
+    if (this.#D.length !== 0)
+      this.#D.length = 0, this.#Q();
+    this.#J.length = 0;
+  }
+  #K() {
+    let D = this.#J.pop();
+    if (D === undefined)
+      D = this.#D.length, this.#D.push(undefined), this.#Q();
+    return D;
+  }
+  #Q() {
+    this.length.onChange?.(this.length.valueOf());
+  }
+}
+
+class G extends X {
+  #D;
+  #J = new Map;
+  #K = new H;
+  #Q = new _({ informUpdate: this.informUpdate.bind(this), addElem: this.#R.bind(this), removeElem: this.#V.bind(this) });
+  constructor({ onChange: D } = {}) {
+    super();
+    this.#D = new $({ onChange: D });
+  }
+  get length() {
+    return this.#D.length;
+  }
+  at(D) {
+    const J = this.#D.at(D);
     return J?.elems.at(J.index);
   }
   add(D) {
-    const J = this.#R.create(D);
-    this.#Q.set(D, J);
+    const J = this.#Q.create(D);
+    this.#J.set(D, J);
   }
   remove(D) {
-    const J = this.#Q.get(D);
+    const J = this.#J.get(D);
     if (J)
-      this.#Q.delete(D), this.#R.recycle(J);
+      this.#J.delete(D), this.#Q.recycle(J);
   }
   clear() {
-    this.#D.forEach((D, J) => {
+    R(this.#D, (D, J) => {
       if (this.informUpdate(J), D)
-        this.#J.recycle(D);
-    }), this.#K.length = 0, this.#D.length = 0, this.#V();
+        this.#K.recycle(D);
+    }), this.#D.clear();
   }
-  #V() {
-    this.length.onChange?.(this.length.valueOf());
+  #R(D, J) {
+    const K = this.#D.addElem(this.#K.create(D, J));
+    return this.informUpdate(K), K;
   }
-  #W() {
-    let D = this.#K.pop();
-    if (D === undefined)
-      D = this.#D.length, this.#D.push(undefined), this.#V();
-    return D;
-  }
-  #X(D) {
-    this.#K.push(D);
-  }
-  #Z(D, J) {
-    const K = this.#W();
-    return this.#D[K] = this.#J.create(D, J, K), this.informUpdate(K), K;
-  }
-  #_(D) {
-    const J = this.#D[D];
+  #V(D) {
+    const J = this.#D.removeElem(D);
     if (J)
-      this.#J.recycle(J), this.#D[D] = undefined;
-    this.#X(D), this.informUpdate(D);
+      this.#K.recycle(J), this.informUpdate(D);
   }
 }
-var $ = [];
+var B = [];
 
-class B extends R {
+class H extends V {
   constructor() {
     super((D, J, K) => {
       if (!D)
@@ -171,7 +195,7 @@ class B extends R {
   }
 }
 
-class H {
+class Y {
   i;
   f;
   warningLimit = 50000;
@@ -210,5 +234,5 @@ class H {
   }
 }
 export {
-  w as Accumulator
+  G as Accumulator
 };
