@@ -26,6 +26,7 @@ export class UpdateListener<T> implements IUpdateListener {
     forEach(this.elems, (_, index) => this.onUpdate(index));
     this.elems.removeUpdateListener?.(this);
     this.elems = EMPTY;
+    this.#indexMapping.length = 0;
   }
 
   onUpdate(index: number, type?: number | undefined): void {

@@ -90,6 +90,8 @@ class SlotPool<T> extends ObjectPool<Slot<T>, [List<T>, IdType]> {
       slot.elems = elems;
       slot.index = index;
       return slot;
+    }, slot => {
+      slot.elems = EMPTY;
     });
   }
 }

@@ -75,7 +75,7 @@ class Z {
     this.elems = D, this.elems.addUpdateListener?.(this), R(D, (J, K) => this.onUpdate(K));
   }
   dispose() {
-    R(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = B;
+    R(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = B, this.#D.length = 0;
   }
   onUpdate(D, J) {
     const K = this.elems.at(D);
@@ -191,6 +191,8 @@ class H extends V {
       if (!D)
         return { elems: J, index: K };
       return D.elems = J, D.index = K, D;
+    }, (D) => {
+      D.elems = B;
     });
   }
 }
