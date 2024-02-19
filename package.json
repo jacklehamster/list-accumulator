@@ -2,7 +2,7 @@
   "name": "list-accumulator",
   "module": "src/index.ts",
   "description": "Component that accumulates lists that notify updates, turning itself into a list. This sounds pointless, but this is very useful for the Dok game engine.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "keywords": [
     "bun",
     "bunjs",
