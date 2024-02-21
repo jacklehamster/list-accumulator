@@ -1,5 +1,5 @@
 import { Accumulator } from "./accumulator/Accumulator";
-import { IUpdatableList } from "./accumulator/IUpdatableList";
+import { IUpdatableList, IPotentiallyUpdatableList } from "./accumulator/IUpdatableList";
 import { IUpdateNotifier } from "./accumulator/IUpdateNotifier";
 import { informFullUpdate } from "./accumulator/update-utils";
 import { UpdateListener } from "./accumulator/UpdateListener";
@@ -9,4 +9,4 @@ import { IUpdateListener } from "./accumulator/IUpdateListener";
 import { SwissCheeseList } from "./accumulator/SwissCheeseList";
 
 export { Accumulator, informFullUpdate, UpdateListener, UpdateListenerPool, UpdateNotifier, SwissCheeseList };
-export type { IUpdatableList, IUpdateNotifier, IUpdateListener };
+export type { IUpdatableList, IPotentiallyUpdatableList, IUpdateNotifier, IUpdateListener };
