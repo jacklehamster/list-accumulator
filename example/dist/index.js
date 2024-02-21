@@ -75,7 +75,7 @@ class Z {
     this.elems = D, this.elems.addUpdateListener?.(this), R(D, (J, K) => this.onUpdate(K));
   }
   dispose() {
-    R(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = B, this.#D.length = 0;
+    R(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = G, this.#D.length = 0;
   }
   onUpdate(D, J) {
     const K = this.elems.at(D);
@@ -94,7 +94,7 @@ class Z {
   }
 }
 
-class _ extends V {
+class $ extends V {
   constructor({ informUpdate: D, addElem: J, removeElem: K }) {
     super((Q, W) => {
       if (Q)
@@ -106,7 +106,7 @@ class _ extends V {
   }
 }
 
-class $ {
+class B {
   #D = [];
   #J = [];
   length;
@@ -142,14 +142,14 @@ class $ {
   }
 }
 
-class G extends X {
+class H extends X {
   #D;
   #J = new Map;
-  #K = new H;
-  #Q = new _({ informUpdate: this.informUpdate.bind(this), addElem: this.#R.bind(this), removeElem: this.#V.bind(this) });
+  #K = new O;
+  #Q = new $({ informUpdate: this.informUpdate.bind(this), addElem: this.#R.bind(this), removeElem: this.#V.bind(this) });
   constructor({ onChange: D } = {}) {
     super();
-    this.#D = new $({ onChange: D });
+    this.#D = new B({ onChange: D });
   }
   get length() {
     return this.#D.length;
@@ -183,16 +183,16 @@ class G extends X {
       this.#K.recycle(J), this.informUpdate(D);
   }
 }
-var B = [];
+var G = [];
 
-class H extends V {
+class O extends V {
   constructor() {
     super((D, J, K) => {
       if (!D)
         return { elems: J, index: K };
       return D.elems = J, D.index = K, D;
     }, (D) => {
-      D.elems = B;
+      D.elems = G;
     });
   }
 }
@@ -236,5 +236,5 @@ class Y {
   }
 }
 export {
-  G as Accumulator
+  H as Accumulator
 };

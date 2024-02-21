@@ -1,11 +1,10 @@
 import { IdType } from "dok-types";
 import { ObjectPool } from "bun-pool";
-import { IUpdateNotifier } from "./IUpdateNotifier";
 import { UpdateNotifier } from "./UpdateNotifier";
 import { List, forEach } from "abstract-list";
 import { UpdateListenerPool } from "./UpdateListenerPool";
 import { UpdateListener } from "./UpdateListener";
-import { IUpdatableList } from "./IUpdatableList";
+import { IPotentiallyUpdatableList, IUpdatableList } from "./IUpdatableList";
 import { SwissCheeseList } from "./SwissCheeseList";
 
 interface Slot<T> {
@@ -41,12 +40,12 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
     return slot?.elems.at(slot.index);
   }
 
-  add(elems: List<T> & Partial<IUpdateNotifier>): void {
+  add(elems: IPotentiallyUpdatableList<T>): void {
     const updateListener = this.#listenerPool.create(elems);
     this.#updateListenerMap.set(elems, updateListener);
   }
 
-  remove(elems: List<T> & Partial<IUpdateNotifier>): void {
+  remove(elems: IPotentiallyUpdatableList<T>): void {
     const listener = this.#updateListenerMap.get(elems);
     if (listener) {
       this.#updateListenerMap.delete(elems);

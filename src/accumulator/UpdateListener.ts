@@ -3,12 +3,13 @@ import { IUpdateNotifier } from "./IUpdateNotifier";
 import { IUpdateListener } from "./IUpdateListener";
 import { List, forEach } from "abstract-list";
 import { EMPTY } from "./Accumulator";
+import { IPotentiallyUpdatableList } from "./IUpdatableList";
 
 
 export class UpdateListener<T> implements IUpdateListener {
   #indexMapping: (number | undefined)[] = [];
 
-  constructor(private elems: List<T> & Partial<IUpdateNotifier>,
+  constructor(private elems: IPotentiallyUpdatableList<T>,
     private informUpdate: (id: IdType, type?: UpdateType) => void,
     private addElem: (elems: List<T>, index: number) => IdType,
     private removeElem: (id: IdType) => void) {
@@ -16,7 +17,7 @@ export class UpdateListener<T> implements IUpdateListener {
     this.initialize(elems);
   }
 
-  initialize(elems: List<T> & Partial<IUpdateNotifier>): void {
+  initialize(elems: IPotentiallyUpdatableList<T>): void {
     this.elems = elems;
     this.elems.addUpdateListener?.(this);
     forEach(elems, (_, index) => this.onUpdate(index));

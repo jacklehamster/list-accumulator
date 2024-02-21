@@ -1,10 +1,10 @@
 import { IdType, UpdateType } from "dok-types";
 import { ObjectPool } from "bun-pool";
-import { IUpdateNotifier } from "./IUpdateNotifier";
 import { List } from "abstract-list";
 import { UpdateListener } from "./UpdateListener";
+import { IPotentiallyUpdatableList } from "./IUpdatableList";
 
-export class UpdateListenerPool<T> extends ObjectPool<UpdateListener<T>, [List<T> & Partial<IUpdateNotifier>]> {
+export class UpdateListenerPool<T> extends ObjectPool<UpdateListener<T>, [IPotentiallyUpdatableList<T>]> {
   constructor({ informUpdate, addElem, removeElem }: {
     informUpdate: (id: IdType, type?: UpdateType) => void;
     addElem: (elems: List<T>, index: number) => IdType;
