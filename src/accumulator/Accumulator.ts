@@ -1,4 +1,4 @@
-import { IdType } from "dok-types";
+import { Active, IdType, UpdateType } from "dok-types";
 import { ObjectPool } from "bun-pool";
 import { UpdateNotifier } from "./UpdateNotifier";
 import { List, forEach } from "abstract-list";
@@ -61,6 +61,12 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
       }
     });
     this.#slots.clear();
+  }
+
+  updateFully(type?: UpdateType): void {
+    for (const [elems, listener] of this.#updateListenerMap) {
+      forEach(elems, (_, index) => listener.onUpdate(index, type));
+    }
   }
 
   #addElemToSlot(elems: List<T>, index: number): IdType {

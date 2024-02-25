@@ -1,5 +1,5 @@
 // /Users/vincent/list-accumulator/example/node_modules/list-accumulator/dist/index.js
-class V {
+class W {
   i;
   f;
   warningLimit = 50000;
@@ -83,8 +83,8 @@ class Z {
     if (Q === undefined) {
       if (!K)
         return;
-      const W = this.addElem(this.elems, D);
-      this.#D[D] = W;
+      const V = this.addElem(this.elems, D);
+      this.#D[D] = V;
       return;
     } else if (!K) {
       this.removeElem(Q), this.#D[D] = undefined;
@@ -94,12 +94,12 @@ class Z {
   }
 }
 
-class $ extends V {
+class $ extends W {
   constructor({ informUpdate: D, addElem: J, removeElem: K }) {
-    super((Q, W) => {
+    super((Q, V) => {
       if (Q)
-        return Q.initialize(W), Q;
-      return new Z(W, D, J, K);
+        return Q.initialize(V), Q;
+      return new Z(V, D, J, K);
     }, (Q) => {
       Q.dispose();
     });
@@ -173,6 +173,10 @@ class H extends X {
         this.#K.recycle(D);
     }), this.#D.clear();
   }
+  updateFully(D) {
+    for (let [J, K] of this.#J)
+      R(J, (Q, V) => K.onUpdate(V, D));
+  }
   #R(D, J) {
     const K = this.#D.addElem(this.#K.create(D, J));
     return this.informUpdate(K), K;
@@ -185,7 +189,7 @@ class H extends X {
 }
 var G = [];
 
-class O extends V {
+class O extends W {
   constructor() {
     super((D, J, K) => {
       if (!D)
@@ -197,7 +201,7 @@ class O extends V {
   }
 }
 
-class Y {
+class _ {
   i;
   f;
   warningLimit = 50000;
