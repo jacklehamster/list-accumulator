@@ -1,9 +1,10 @@
 # list-accumulator
 [![npm version](https://badge.fury.io/js/list-accumulator.svg)](https://www.npmjs.com/package/list-accumulator)
 
-Bun template for creating projects using bunjs
+Component that accumulates lists that notify updates, turning itself into a list. This sounds pointless, but this is very useful for the Dok game engine.
 
 ![](https://jacklehamster.github.io/list-accumulator/icon.png)
+
 ## Install bun
 
 https://bun.sh/
