@@ -26,6 +26,7 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T>,
     addElem: this.#addElemToSlot.bind(this),
     removeElem: this.#removeElemFromSlot.bind(this),
   });
+  #active = false;
 
   constructor({ onChange }: Partial<Props> = {}) {
     super();
@@ -37,6 +38,9 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T>,
   }
 
   at(id: IdType): T | undefined {
+    if (!this.#active) {
+      return undefined;
+    }
     const slot = this.#slots.at(id);
     return slot?.elems.at(slot.index);
   }
@@ -64,8 +68,18 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T>,
     this.#slots.clear();
   }
 
+  activate(): void {
+    if (!this.#active) {
+      this.#active = true;
+      this.updateFully();
+    }
+  }
+
   deactivate(): void {
-    this.clear();
+    if (this.#active) {
+      this.#active = false;
+      this.updateFully();
+    }
   }
 
   updateFully(type?: UpdateType): void {
