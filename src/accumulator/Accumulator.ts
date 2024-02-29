@@ -6,7 +6,6 @@ import { UpdateListenerPool } from "./UpdateListenerPool";
 import { UpdateListener } from "./UpdateListener";
 import { IPotentiallyUpdatableList, IUpdatableList } from "./IUpdatableList";
 import { SwissCheeseList } from "./SwissCheeseList";
-import { Active } from "dok-types"
 
 interface Slot<T> {
   elems: List<T>;
