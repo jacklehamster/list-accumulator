@@ -1,4 +1,4 @@
-import { Active, IdType, UpdateType } from "dok-types";
+import { IdType, UpdateType } from "dok-types";
 import { ObjectPool } from "bun-pool";
 import { UpdateNotifier } from "./UpdateNotifier";
 import { List, forEach } from "abstract-list";
@@ -6,6 +6,7 @@ import { UpdateListenerPool } from "./UpdateListenerPool";
 import { UpdateListener } from "./UpdateListener";
 import { IPotentiallyUpdatableList, IUpdatableList } from "./IUpdatableList";
 import { SwissCheeseList } from "./SwissCheeseList";
+import { Active } from "dok-types"
 
 interface Slot<T> {
   elems: List<T>;
@@ -16,7 +17,7 @@ interface Props {
   onChange(value: number): void;
 }
 
-export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> {
+export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T>, Active {
   readonly #slots;
   readonly #updateListenerMap: Map<List<T>, UpdateListener<T>> = new Map();
   readonly #slotPool = new SlotPool<T>();
@@ -61,6 +62,10 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
       }
     });
     this.#slots.clear();
+  }
+
+  deactivate(): void {
+    this.clear();
   }
 
   updateFully(type?: UpdateType): void {
