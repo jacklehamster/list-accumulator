@@ -14,7 +14,7 @@ interface Slot<T> {
 
 interface Props<T> {
   onChange(value: number): void;
-  list: IPotentiallyUpdatableList<T>[];
+  elems: IPotentiallyUpdatableList<T>[];
 }
 
 export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> {
@@ -27,7 +27,7 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
     removeElem: this.#removeElemFromSlot.bind(this),
   });
 
-  constructor({ onChange, list: elems }: Partial<Props<T>> = {}) {
+  constructor({ onChange, elems }: Partial<Props<T>> = {}) {
     super();
     this.#slots = new SwissCheeseList<Slot<T>>({ onChange });
     elems?.forEach(list => {
