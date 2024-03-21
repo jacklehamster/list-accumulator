@@ -30,9 +30,7 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   constructor({ onChange, elems }: Partial<Props<T>> = {}) {
     super();
     this.#slots = new SwissCheeseList<Slot<T>>({ onChange });
-    elems?.forEach(list => {
-      this.add(list);
-    });
+    elems?.forEach(list => this.add(list));
   }
 
   get length(): List<T>["length"] {
@@ -52,6 +50,11 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   remove(elems: IPotentiallyUpdatableList<T>): void {
     const listener = this.#updateListenerMap.get(elems);
     if (listener) {
+      forEach(this.#slots, (slot, id) => {
+        if (slot?.elems === elems) {
+          this.#removeElemFromSlot(id);
+        }
+      });
       this.#updateListenerMap.delete(elems);
       this.#listenerPool.recycle(listener);
     }
