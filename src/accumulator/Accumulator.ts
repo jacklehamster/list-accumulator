@@ -53,7 +53,9 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
     const listener = this.#updateListenerMap.get(elems);
     if (listener) {
       for (const slotId of listener.slotIdSet) {
-        this.#removeElemFromSlot(slotId);
+        if (slotId) {
+          this.#removeElemFromSlot(slotId);
+        }
       }
       this.#updateListenerMap.delete(elems);
       this.#listenerPool.recycle(listener);
