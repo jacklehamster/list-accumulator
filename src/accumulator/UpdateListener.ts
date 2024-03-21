@@ -20,6 +20,7 @@ export class UpdateListener<T> implements IUpdateListener {
   initialize(elems: IPotentiallyUpdatableList<T>): void {
     this.elems = elems;
     this.elems.addUpdateListener?.(this);
+    forEach(elems, (_, index) => this.onUpdate(index));
   }
 
   dispose(): void {
