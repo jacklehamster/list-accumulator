@@ -7,7 +7,7 @@ import { IPotentiallyUpdatableList } from "./IUpdatableList";
 
 export class UpdateListener<T> implements IUpdateListener {
   readonly #indexMapping: (number | undefined)[] = [];
-  readonly idSet = new Set<IdType>();
+  readonly #idSet = new Set<IdType>();
 
   constructor(private elems: IPotentiallyUpdatableList<T>,
     private informUpdate: (id: IdType, type?: UpdateType) => void,
@@ -20,15 +20,14 @@ export class UpdateListener<T> implements IUpdateListener {
   initialize(elems: IPotentiallyUpdatableList<T>): void {
     this.elems = elems;
     this.elems.addUpdateListener?.(this);
-    forEach(elems, (_, index) => this.onUpdate(index));
   }
 
   dispose(): void {
-    forEach(this.elems, (_, index) => this.onUpdate(index));
+    this.#idSet.forEach(id => this.removeElem(id));
     this.elems.removeUpdateListener?.(this);
     this.elems = EMPTY;
     this.#indexMapping.length = 0;
-    this.idSet.clear();
+    this.#idSet.clear();
   }
 
   onUpdate(index: number, type?: number | undefined): void {
@@ -42,11 +41,11 @@ export class UpdateListener<T> implements IUpdateListener {
       //  create new entry
       const id = this.addElem(this.elems, index);
       this.#indexMapping[index] = id;
-      this.idSet.add(id);
+      this.#idSet.add(id);
       return;
     } else if (!elem) {
       //  remove entry
-      this.idSet.delete(id);
+      this.#idSet.delete(id);
       this.removeElem(id);
       this.#indexMapping[index] = undefined;
       return;
