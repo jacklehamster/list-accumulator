@@ -17,8 +17,6 @@ interface Props<T> {
   elems: IPotentiallyUpdatableList<T>[];
 }
 
-export type SlotId = IdType;
-
 export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> {
   readonly #slots;
   readonly #updateListenerMap: Map<List<T>, UpdateListener<T>> = new Map();
@@ -39,8 +37,8 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
     return this.#slots.length;
   }
 
-  at(slotId: SlotId): T | undefined {
-    const slot = this.#slots.at(slotId);
+  at(id: IdType): T | undefined {
+    const slot = this.#slots.at(id);
     return slot?.elems.at(slot.index);
   }
 
@@ -52,19 +50,19 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   remove(elems: IPotentiallyUpdatableList<T>): void {
     const listener = this.#updateListenerMap.get(elems);
     if (listener) {
-      for (const slotId of listener.slotIdSet) {
-        if (slotId) {
-          this.#removeElemFromSlot(slotId);
+      forEach(this.#slots, (slot, id) => {
+        if (slot?.elems === elems) {
+          this.#removeElemFromSlot(id);
         }
-      }
+      });
       this.#updateListenerMap.delete(elems);
       this.#listenerPool.recycle(listener);
     }
   }
 
   clear(): void {
-    forEach(this.#slots, (slot, slotId) => {
-      this.informUpdate(slotId);
+    forEach(this.#slots, (slot, id) => {
+      this.informUpdate(id);
       if (slot) {
         this.#slotPool.recycle(slot);
       }
@@ -78,17 +76,17 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
     }
   }
 
-  #addElemToSlot(elems: List<T>, index: number): SlotId {
-    const slotId = this.#slots.addElem(this.#slotPool.create(elems, index));
-    this.informUpdate(slotId);
-    return slotId;
+  #addElemToSlot(elems: List<T>, index: number): IdType {
+    const id = this.#slots.addElem(this.#slotPool.create(elems, index));
+    this.informUpdate(id);
+    return id;
   }
 
-  #removeElemFromSlot(slotId: SlotId): void {
-    const slot = this.#slots.removeElem(slotId);
+  #removeElemFromSlot(id: IdType): void {
+    const slot = this.#slots.removeElem(id);
     if (slot) {
       this.#slotPool.recycle(slot);
-      this.informUpdate(slotId);
+      this.informUpdate(id);
     }
   }
 }

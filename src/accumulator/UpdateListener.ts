@@ -1,18 +1,18 @@
 import { IdType, UpdateType } from "dok-types";
+import { IUpdateNotifier } from "./IUpdateNotifier";
 import { IUpdateListener } from "./IUpdateListener";
 import { List, forEach } from "abstract-list";
-import { EMPTY, SlotId } from "./Accumulator";
+import { EMPTY } from "./Accumulator";
 import { IPotentiallyUpdatableList } from "./IUpdatableList";
 
 
 export class UpdateListener<T> implements IUpdateListener {
-  readonly #indexToSlotIdMapping: (number | undefined)[] = [];
-  readonly slotIdSet = new Set<SlotId>();
+  #indexMapping: (number | undefined)[] = [];
 
   constructor(private elems: IPotentiallyUpdatableList<T>,
-    private informUpdate: (slotId: SlotId, type?: UpdateType) => void,
+    private informUpdate: (id: IdType, type?: UpdateType) => void,
     private addElem: (elems: List<T>, index: number) => IdType,
-    private removeElem: (slotId: IdType) => void) {
+    private removeElem: (id: IdType) => void) {
     this.elems = elems;
     this.initialize(elems);
   }
@@ -27,31 +27,29 @@ export class UpdateListener<T> implements IUpdateListener {
     forEach(this.elems, (_, index) => this.onUpdate(index));
     this.elems.removeUpdateListener?.(this);
     this.elems = EMPTY;
-    this.#indexToSlotIdMapping.length = 0;
+    this.#indexMapping.length = 0;
   }
 
   onUpdate(index: number, type?: number | undefined): void {
     const elem = this.elems.at(index);
-    let slotId = this.#indexToSlotIdMapping[index];
-    if (slotId === undefined) {
+    let id = this.#indexMapping[index];
+    if (id === undefined) {
       if (!elem) {
         //  no update needed on non-existing item
         return;
       }
       //  create new entry
-      const slotId = this.addElem(this.elems, index);
-      this.#indexToSlotIdMapping[index] = slotId;
-      this.slotIdSet.add(slotId);
+      const id = this.addElem(this.elems, index);
+      this.#indexMapping[index] = id;
       return;
     } else if (!elem) {
       //  remove entry
-      this.removeElem(slotId);
-      this.#indexToSlotIdMapping[index] = undefined;
-      this.slotIdSet.delete(slotId);
+      this.removeElem(id);
+      this.#indexMapping[index] = undefined;
       return;
     }
 
     //  Inform update
-    this.informUpdate(slotId, type);
+    this.informUpdate(id, type);
   }
 }
