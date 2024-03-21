@@ -19,7 +19,7 @@ interface Props<T> {
 
 export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> {
   readonly #slots;
-  readonly #updateListenerMap: Map<List<T>, UpdateListener<T>> = new Map();
+  readonly #updateListenerMap = new Map<List<T>, UpdateListener<T>>();
   readonly #slotPool = new SlotPool<T>();
   readonly #listenerPool = new UpdateListenerPool<T>({
     informUpdate: this.informUpdate.bind(this),
@@ -50,11 +50,14 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   remove(elems: IPotentiallyUpdatableList<T>): void {
     const listener = this.#updateListenerMap.get(elems);
     if (listener) {
-      forEach(this.#slots, (slot, id) => {
-        if (slot?.elems === elems) {
-          this.#removeElemFromSlot(id);
-        }
+      Array.from(listener.idSet).forEach(id => {
+        this.#removeElemFromSlot(id);
       });
+      // forEach(this.#slots, (slot, id) => {
+      //   if (slot?.elems === elems) {
+      //     this.#removeElemFromSlot(id);
+      //   }
+      // });
       this.#updateListenerMap.delete(elems);
       this.#listenerPool.recycle(listener);
     }

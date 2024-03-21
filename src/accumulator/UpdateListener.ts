@@ -1,5 +1,4 @@
 import { IdType, UpdateType } from "dok-types";
-import { IUpdateNotifier } from "./IUpdateNotifier";
 import { IUpdateListener } from "./IUpdateListener";
 import { List, forEach } from "abstract-list";
 import { EMPTY } from "./Accumulator";
@@ -7,7 +6,8 @@ import { IPotentiallyUpdatableList } from "./IUpdatableList";
 
 
 export class UpdateListener<T> implements IUpdateListener {
-  #indexMapping: (number | undefined)[] = [];
+  readonly #indexMapping: (number | undefined)[] = [];
+  readonly idSet = new Set<IdType>();
 
   constructor(private elems: IPotentiallyUpdatableList<T>,
     private informUpdate: (id: IdType, type?: UpdateType) => void,
@@ -41,9 +41,11 @@ export class UpdateListener<T> implements IUpdateListener {
       //  create new entry
       const id = this.addElem(this.elems, index);
       this.#indexMapping[index] = id;
+      this.idSet.add(id);
       return;
     } else if (!elem) {
       //  remove entry
+      this.idSet.delete(id);
       this.removeElem(id);
       this.#indexMapping[index] = undefined;
       return;
