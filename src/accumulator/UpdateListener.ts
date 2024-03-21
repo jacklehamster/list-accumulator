@@ -28,6 +28,7 @@ export class UpdateListener<T> implements IUpdateListener {
     this.elems.removeUpdateListener?.(this);
     this.elems = EMPTY;
     this.#indexMapping.length = 0;
+    this.idSet.clear();
   }
 
   onUpdate(index: number, type?: number | undefined): void {
