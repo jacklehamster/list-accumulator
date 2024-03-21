@@ -23,26 +23,8 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   readonly #slotPool = new SlotPool<T>();
   readonly #listenerPool = new UpdateListenerPool<T>({
     informUpdate: this.informUpdate.bind(this),
-    addElem: (elems, index) => {
-      const id = this.#addElemToSlot(elems, index);
-      this.#idSet.get(elems)?.add(id);
-      return id;
-    },
-    removeElem: (id) => {
-      const elems = this.#slots.at(id)?.elems;
-      if (elems) {
-        this.#idSet.get(elems)?.delete(id);
-        this.#removeElemFromSlot(id);
-      }
-    },
-  });
-  readonly #idSet = new Map<List<T>, Set<IdType>>();
-  readonly #setPool = new ObjectPool<Set<IdType>>((elem) => {
-    if (!elem) {
-      return new Set();
-    }
-    elem.clear();
-    return elem;
+    addElem: this.#addElemToSlot.bind(this),
+    removeElem: this.#removeElemFromSlot.bind(this),
   });
 
   constructor({ onChange, elems }: Partial<Props<T>> = {}) {
@@ -63,19 +45,20 @@ export class Accumulator<T> extends UpdateNotifier implements IUpdatableList<T> 
   add(elems: IPotentiallyUpdatableList<T>): void {
     const updateListener = this.#listenerPool.create(elems);
     this.#updateListenerMap.set(elems, updateListener);
-    this.#idSet.set(elems, this.#setPool.create());
   }
 
   remove(elems: IPotentiallyUpdatableList<T>): void {
-    const idSet = this.#idSet.get(elems);
-    if (idSet) {
-      idSet.forEach(id => this.#removeElemFromSlot(id));
-      this.#idSet.delete(elems);
-      this.#setPool.recycle(idSet);
-    }
-
     const listener = this.#updateListenerMap.get(elems);
     if (listener) {
+      const idd: number[] = [];
+      console.log(">", Array.from(listener.idSet));
+      forEach(this.#slots, (slot, id) => {
+        if (slot?.elems === elems) {
+          this.#removeElemFromSlot(id);
+          idd.push(id);
+        }
+      });
+      console.log(">>", idd);
       this.#updateListenerMap.delete(elems);
       this.#listenerPool.recycle(listener);
     }
