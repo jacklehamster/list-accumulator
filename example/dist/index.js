@@ -1,244 +1,245 @@
 // /Users/vincent/list-accumulator/example/node_modules/list-accumulator/dist/index.js
-class W {
+class a {
   i;
   f;
   warningLimit = 50000;
-  #D = new Set;
-  #J = [];
-  constructor(D, J) {
-    this.initCall = D, this.onRecycle = J;
+  #t = new Set;
+  #e = [];
+  constructor(t, e) {
+    this.initCall = t, this.onRecycle = e;
   }
-  create(...D) {
-    const J = this.#J.pop();
-    if (J)
-      return this.#D.add(J), this.initCall(J, ...D);
-    const K = this.initCall(undefined, ...D);
-    return this.#D.add(K), this.#Q(), K;
+  create(...t) {
+    const e = this.#e.pop();
+    if (e)
+      return this.#t.add(e), this.initCall(e, ...t);
+    const r = this.initCall(undefined, ...t);
+    return this.#t.add(r), this.#o(), r;
   }
-  recycle(D) {
-    this.#D.delete(D), this.#K(D);
+  recycle(t) {
+    this.#t.delete(t), this.#r(t);
   }
   recycleAll() {
-    for (let D of this.#D)
-      this.#K(D);
-    this.#D.clear();
+    for (let t of this.#t)
+      this.#r(t);
+    this.#t.clear();
   }
   clear() {
-    this.#J.length = 0, this.#D.clear();
+    this.#e.length = 0, this.#t.clear();
   }
   countObjectsInExistence() {
-    return this.#D.size + this.#J.length;
+    return this.#t.size + this.#e.length;
   }
-  #K(D) {
-    this.#J.push(D), this.onRecycle?.(D);
+  #r(t) {
+    this.#e.push(t), this.onRecycle?.(t);
   }
-  #Q() {
+  #o() {
     if (this.countObjectsInExistence() === this.warningLimit)
-      console.warn("ObjectPool already created", this.#D.size + this.#J.length, "in", this.constructor.name);
+      console.warn("ObjectPool already created", this.#t.size + this.#e.length, "in", this.constructor.name);
   }
 }
 
-class X {
+class d {
   listeners = new Set;
-  informUpdate(D, J) {
-    this.listeners.forEach((K) => K.onUpdate(D, J));
+  informUpdate(t, e) {
+    this.listeners.forEach((r) => r.onUpdate(t, e));
   }
-  addUpdateListener(D) {
-    this.listeners.add(D);
+  addUpdateListener(t) {
+    this.listeners.add(t);
   }
-  removeUpdateListener(D) {
-    this.listeners.delete(D);
+  removeUpdateListener(t) {
+    this.listeners.delete(t);
   }
 }
-var R = function(D, J) {
-  if (D) {
-    const K = D.length.valueOf();
-    for (let Q = 0;Q < K; Q++)
-      J(D.at(Q), Q);
+var i = function(t, e) {
+  if (t) {
+    const r = t.length.valueOf();
+    for (let o = 0;o < r; o++)
+      e(t.at(o), o);
   }
 };
 
-class Z {
-  D;
-  J;
-  K;
-  Q;
-  #D = [];
-  constructor(D, J, K, Q) {
-    this.elems = D;
-    this.informUpdate = J;
-    this.addElem = K;
-    this.removeElem = Q;
-    this.elems = D, this.initialize(D);
+class n {
+  t;
+  e;
+  r;
+  o;
+  #t = [];
+  #e = new Set;
+  constructor(t, e, r, o) {
+    this.elems = t;
+    this.informUpdate = e;
+    this.addElem = r;
+    this.removeElem = o;
+    this.elems = t, this.initialize(t);
   }
-  initialize(D) {
-    this.elems = D, this.elems.addUpdateListener?.(this), R(D, (J, K) => this.onUpdate(K));
+  initialize(t) {
+    this.elems = t, this.elems.addUpdateListener?.(this), i(t, (e, r) => this.onUpdate(r));
   }
   dispose() {
-    R(this.elems, (D, J) => this.onUpdate(J)), this.elems.removeUpdateListener?.(this), this.elems = G, this.#D.length = 0;
+    this.#e.forEach((t) => this.removeElem(t)), this.elems.removeUpdateListener?.(this), this.elems = m, this.#t.length = 0, this.#e.clear();
   }
-  onUpdate(D, J) {
-    const K = this.elems.at(D);
-    let Q = this.#D[D];
-    if (Q === undefined) {
-      if (!K)
+  onUpdate(t, e) {
+    const r = this.elems.at(t);
+    let o = this.#t[t];
+    if (o === undefined) {
+      if (!r)
         return;
-      const V = this.addElem(this.elems, D);
-      this.#D[D] = V;
+      const s = this.addElem(this.elems, t);
+      this.#t[t] = s, this.#e.add(s);
       return;
-    } else if (!K) {
-      this.removeElem(Q), this.#D[D] = undefined;
+    } else if (!r) {
+      this.#e.delete(o), this.removeElem(o), this.#t[t] = undefined;
       return;
     }
-    this.informUpdate(Q, J);
+    this.informUpdate(o, e);
   }
 }
 
-class $ extends W {
-  constructor({ informUpdate: D, addElem: J, removeElem: K }) {
-    super((Q, V) => {
-      if (Q)
-        return Q.initialize(V), Q;
-      return new Z(V, D, J, K);
-    }, (Q) => {
-      Q.dispose();
+class l extends a {
+  constructor({ informUpdate: t, addElem: e, removeElem: r }) {
+    super((o, s) => {
+      if (o)
+        return o.initialize(s), o;
+      return new n(s, t, e, r);
+    }, (o) => {
+      o.dispose();
     });
   }
 }
 
-class B {
-  #D = [];
-  #J = [];
+class p {
+  #t = [];
+  #e = [];
   length;
-  constructor({ onChange: D } = {}) {
-    this.length = { valueOf: () => this.#D.length, onChange: D ? (J) => D?.(J) : undefined };
+  constructor({ onChange: t } = {}) {
+    this.length = { valueOf: () => this.#t.length, onChange: t ? (e) => t?.(e) : undefined };
   }
-  at(D) {
-    return this.#D.at(D);
+  at(t) {
+    return this.#t.at(t);
   }
-  addElem(D) {
-    const J = this.#K();
-    return this.#D[J] = D, J;
+  addElem(t) {
+    const e = this.#r();
+    return this.#t[e] = t, e;
   }
-  removeElem(D) {
-    const J = this.#D.at(D);
-    if (J !== undefined)
-      this.#D[D] = undefined, this.#J.push(D);
-    return J;
+  removeElem(t) {
+    const e = this.#t.at(t);
+    if (e !== undefined)
+      this.#t[t] = undefined, this.#e.push(t);
+    return e;
   }
   clear() {
-    if (this.#D.length !== 0)
-      this.#D.length = 0, this.#Q();
-    this.#J.length = 0;
+    if (this.#t.length !== 0)
+      this.#t.length = 0, this.#o();
+    this.#e.length = 0;
   }
-  #K() {
-    let D = this.#J.pop();
-    if (D === undefined)
-      D = this.#D.length, this.#D.push(undefined), this.#Q();
-    return D;
+  #r() {
+    let t = this.#e.pop();
+    if (t === undefined)
+      t = this.#t.length, this.#t.push(undefined), this.#o();
+    return t;
   }
-  #Q() {
+  #o() {
     this.length.onChange?.(this.length.valueOf());
   }
 }
 
-class H extends X {
-  #D;
-  #J = new Map;
-  #K = new O;
-  #Q = new $({ informUpdate: this.informUpdate.bind(this), addElem: this.#R.bind(this), removeElem: this.#V.bind(this) });
-  constructor({ onChange: D } = {}) {
+class h extends d {
+  #t;
+  #e = new Map;
+  #r = new T;
+  #o = new l({ informUpdate: this.informUpdate.bind(this), addElem: this.#s.bind(this), removeElem: this.#i.bind(this) });
+  constructor({ onChange: t, elems: e } = {}) {
     super();
-    this.#D = new B({ onChange: D });
+    this.#t = new p({ onChange: t }), e?.forEach((r) => this.add(r));
   }
   get length() {
-    return this.#D.length;
+    return this.#t.length;
   }
-  at(D) {
-    const J = this.#D.at(D);
-    return J?.elems.at(J.index);
+  at(t) {
+    const e = this.#t.at(t);
+    return e?.elems.at(e.index);
   }
-  add(D) {
-    const J = this.#Q.create(D);
-    this.#J.set(D, J);
+  add(t) {
+    const e = this.#o.create(t);
+    this.#e.set(t, e);
   }
-  remove(D) {
-    const J = this.#J.get(D);
-    if (J)
-      this.#J.delete(D), this.#Q.recycle(J);
+  remove(t) {
+    const e = this.#e.get(t);
+    if (e)
+      this.#e.delete(t), this.#o.recycle(e);
   }
   clear() {
-    R(this.#D, (D, J) => {
-      if (this.informUpdate(J), D)
-        this.#K.recycle(D);
-    }), this.#D.clear();
+    i(this.#t, (t, e) => {
+      if (this.informUpdate(e), t)
+        this.#r.recycle(t);
+    }), this.#t.clear();
   }
-  updateFully(D) {
-    for (let [J, K] of this.#J)
-      R(J, (Q, V) => K.onUpdate(V, D));
+  updateFully(t) {
+    for (let [e, r] of this.#e)
+      i(e, (o, s) => r.onUpdate(s, t));
   }
-  #R(D, J) {
-    const K = this.#D.addElem(this.#K.create(D, J));
-    return this.informUpdate(K), K;
+  #s(t, e) {
+    const r = this.#t.addElem(this.#r.create(t, e));
+    return this.informUpdate(r), r;
   }
-  #V(D) {
-    const J = this.#D.removeElem(D);
-    if (J)
-      this.#K.recycle(J), this.informUpdate(D);
+  #i(t) {
+    const e = this.#t.removeElem(t);
+    if (e)
+      this.#r.recycle(e), this.informUpdate(t);
   }
 }
-var G = [];
+var m = [];
 
-class O extends W {
+class T extends a {
   constructor() {
-    super((D, J, K) => {
-      if (!D)
-        return { elems: J, index: K };
-      return D.elems = J, D.index = K, D;
-    }, (D) => {
-      D.elems = G;
+    super((t, e, r) => {
+      if (!t)
+        return { elems: e, index: r };
+      return t.elems = e, t.index = r, t;
+    }, (t) => {
+      t.elems = m;
     });
   }
 }
 
-class _ {
+class U {
   i;
   f;
   warningLimit = 50000;
-  #D = new Set;
-  #J = [];
-  constructor(D, J) {
-    this.initCall = D, this.onRecycle = J;
+  #t = new Set;
+  #e = [];
+  constructor(t, e) {
+    this.initCall = t, this.onRecycle = e;
   }
-  create(...D) {
-    const J = this.#J.pop();
-    if (J)
-      return this.#D.add(J), this.initCall(J, ...D);
-    const K = this.initCall(undefined, ...D);
-    return this.#D.add(K), this.#Q(), K;
+  create(...t) {
+    const e = this.#e.pop();
+    if (e)
+      return this.#t.add(e), this.initCall(e, ...t);
+    const r = this.initCall(undefined, ...t);
+    return this.#t.add(r), this.#o(), r;
   }
-  recycle(D) {
-    this.#D.delete(D), this.#K(D);
+  recycle(t) {
+    this.#t.delete(t), this.#r(t);
   }
   recycleAll() {
-    for (let D of this.#D)
-      this.#K(D);
-    this.#D.clear();
+    for (let t of this.#t)
+      this.#r(t);
+    this.#t.clear();
   }
   clear() {
-    this.#J.length = 0, this.#D.clear();
+    this.#e.length = 0, this.#t.clear();
   }
   countObjectsInExistence() {
-    return this.#D.size + this.#J.length;
+    return this.#t.size + this.#e.length;
   }
-  #K(D) {
-    this.#J.push(D), this.onRecycle?.(D);
+  #r(t) {
+    this.#e.push(t), this.onRecycle?.(t);
   }
-  #Q() {
+  #o() {
     if (this.countObjectsInExistence() === this.warningLimit)
-      console.warn("ObjectPool already created", this.#D.size + this.#J.length, "in", this.constructor.name);
+      console.warn("ObjectPool already created", this.#t.size + this.#e.length, "in", this.constructor.name);
   }
 }
 export {
-  H as Accumulator
+  h as Accumulator
 };
